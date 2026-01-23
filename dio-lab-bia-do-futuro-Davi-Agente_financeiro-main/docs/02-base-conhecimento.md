@@ -1,172 +1,100 @@
-# Base de Conhecimento
-
-> [!TIP]
-> **Prompt usado para esta etapa:**
-> 
-> Organize a base de conhecimento do agente "Edu" usando os 4 arquivos da pasta `data/` (em anexo). Explique pra que serve cada arquivo e monte um exemplo de contexto formatado que será enviado pro LLM. Preencha o template abaixo.
->
-> [cole ou anexe o template `02-base-conhecimento.md` pra contexto]
+# Base de Conhecimento - Axézinho 🎒
 
 ## Dados Utilizados
 
-| Arquivo | Formato | Para que serve no Edu? |
+A base de conhecimento do Axézinho foi simplificada para atender ao público infantil e à arquitetura de regras (sem IA generativa pesada).
+
+| Arquivo | Formato | Para que serve no Axézinho? |
 |---------|---------|---------------------|
-| `historico_atendimento.csv` | CSV | Contextualizar interações anteriores, ou seja, dar continuidade ao atendimento de forma mais eficiente. |
-| `perfil_investidor.json` | JSON | Personalizar as explicações sobre as dúvidas e necessidades de aprendizado do cliente. |
-| `produtos_financeiros.json` | JSON | Conhecer os produtos disponíveis para que eles possam ser ensinados ao cliente. |
-| `transacoes.csv` | CSV | Analisar padrão de gastos do cliente e usar essas informações de forma didática. |
+| `perfil_explorador.json` | JSON | Define o "save" do jogador: nome, nível (XP), avatar, meta atual (ex: Skate) e conquistas desbloqueadas. |
+| `enciclopedia_economia.json` | JSON | Funciona como o "cérebro" educativo. Contém conceitos (Escambo, 5 Rs) e explicações validadas pelo material didático. |
+| `missoes.json` | JSON | Lista de desafios práticos (ex: "Reciclar lixo", "Guardar moeda") que geram engajamento e XP. |
+| `cofrinho_virtual.csv` | CSV | Histórico visual de "Ganhos" (mesada) e "Trocas" (gastos), focado em ensinar para onde o dinheiro vai. |
 
 ---
 
 ## Adaptações nos Dados
 
-> Você modificou ou expandiu os dados mockados? Descreva aqui.
+Para tornar a experiência lúdica e segura, os dados originais do projeto "Edu" sofreram as seguintes transformações:
 
-O produto Fundo Imobiliário (FII) substituiu o Fundo Multimercado, pois pessoalmente me sinto mais confiante em usar apenas produtos financeiros que eu conheço. Assim, poderei validar as respostas do Edu de forma mais assertiva.
+1.  **De Investidor para Explorador:** Substituímos o `perfil_investidor` (focado em risco/patrimônio) pelo `perfil_explorador`, focado em **Gamificação** (XP, Títulos e Metas visuais).
+2.  **Conteúdo Curado:** O arquivo `produtos_financeiros.json` (CDB, LCI) foi removido. No lugar, criamos a `enciclopedia_economia.json` com base no PDF "Educação Financeira para Crianças", garantindo que o agente explique apenas conceitos adequados à idade (História do Dinheiro, Necessidade vs. Desejo).
+3.  **Transações Simplificadas:** O CSV agora registra apenas categorias simples (Lanche, Brinquedo, Mesada) para facilitar a visualização em gráficos ou tabelas simples.
 
 ---
 
 ## Estratégia de Integração
 
 ### Como os dados são carregados?
-> Descreva como seu agente acessa a base de conhecimento.
-
-Existem duas possibilidades, injetar os dados diretamente no prompt (Ctrl + C, Ctrl + V) ou carregar os arquivos via código, como no exemplo abaixo:
+Os dados são carregados diretamente pelo Python (`src/conteudo.py`) no início da execução do Streamlit, servindo como memória rápida para a lógica do jogo.
 
 ```python
 import pandas as pd
 import json
 
-perfil = json.load(open('./data/perfil_investidor.json'))
-transacoes = pd.read_csv('./data/transacoes.csv')
-historico = pd.read_csv('./data/historico_atendimento.csv')
-produtos = json.load(open('./data/produtos_financeiros.json'))
+# Carregamento da memória do Axézinho
+perfil = json.load(open('./data/perfil_explorador.json'))
+enciclopedia = json.load(open('./data/enciclopedia_economia.json'))
+missoes = json.load(open('./data/missoes.json'))
+cofrinho = pd.read_csv('./data/cofrinho_virtual.csv')
+```
+Fluxo Padrão:
+ 1️⃣ "A criança faz uma pergunta"
+ 2️⃣ "O sistema identifica a intenção (dúvida, missão, progresso)"
+ 3️⃣ "Busca palavras-chave nos arquivos JSON"
+ 4️⃣ "Retorna a informação exata armazenada"
+ >Exemplo:
+ * Pergunta: “O que é escambo?”
+ * Ação: Busca pelo conceito "Escambo" na enciclopédia
+ * Resposta: Explicação fixa e validada, sem risco de erro ou alucinação
 ```
 
 ### Como os dados são usados no prompt?
-> Os dados vão no system prompt? São consultados dinamicamente?
+> Diferente de um LLM que precisa de um "Contexto de Prompt", o Axézinho usa uma Lógica de Regras (Rule-Based). Ele busca palavras-chave na pergunta da criança e consulta os dados para montar a resposta.
 
-Para simplificar, podemos simplesmente "injetar" os dados em nosso prompt, agarntindo que o Agente tenha o melhor contexto possível. Lembrando que, em soluções mais robustas, o ideal é que essas informaçoes sejam carregadas dinamicamente para que possamos ganhar flexibilidade.
+```
+ 1️⃣ "A criança faz uma pergunta"
+ 2️⃣ "O sistema identifica a intenção (dúvida, missão, progresso)"
+ 3️⃣ "Busca palavras-chave nos arquivos JSON"
+ 4️⃣ "Retorna a informação exata armazenada"
+ >Exemplo:
+ * Pergunta: "O que é escambo?"
+ * Ação: Busca pelo conceito "Escambo" na enciclopédia
+ * Resposta: Explicação fixa e validada, sem risco de erro ou alucinação
+```
 
-```text
-DADOS DO CLIENTE E PERFIL (data/perfil_investidor.json):
+# Exemplo de Estrutura de Dados
+Abaixo, um exemplo de como as informações estão estruturadas para alimentar o jogo:
+
+### 1. Perfil do Jogador (perfil_explorador.json)
+
+### 1. Perfil do Jogador (perfil_explorador.json)
+```json
 {
-  "nome": "João Silva",
-  "idade": 32,
-  "profissao": "Analista de Sistemas",
-  "renda_mensal": 5000.00,
-  "perfil_investidor": "moderado",
-  "objetivo_principal": "Construir reserva de emergência",
-  "patrimonio_total": 15000.00,
-  "reserva_emergencia_atual": 10000.00,
-  "aceita_risco": false,
-  "metas": [
-    {
-      "meta": "Completar reserva de emergência",
-      "valor_necessario": 15000.00,
-      "prazo": "2026-06"
-    },
-    {
-      "meta": "Entrada do apartamento",
-      "valor_necessario": 50000.00,
-      "prazo": "2027-12"
-    }
-  ]
+  "nome": "Jack",
+  "idade": 10,
+  "titulo": "Explorador Iniciante",
+  "xp_atual": 150,
+  "meta_atual": {
+    "nome": "Comprar Skate",
+    "custo": 200.00,
+    "guardado": 45.00
+  }
 }
+```
+### 2. Conteúdo Educativo (enciclopedia_economia.json)
 
-TRANSACOES DO CLIENTE (data/transacoes.csv):
-data,descricao,categoria,valor,tipo
-2025-10-01,Salário,receita,5000.00,entrada
-2025-10-02,Aluguel,moradia,1200.00,saida
-2025-10-03,Supermercado,alimentacao,450.00,saida
-2025-10-05,Netflix,lazer,55.90,saida
-2025-10-07,Farmácia,saude,89.00,saida
-2025-10-10,Restaurante,alimentacao,120.00,saida
-2025-10-12,Uber,transporte,45.00,saida
-2025-10-15,Conta de Luz,moradia,180.00,saida
-2025-10-20,Academia,saude,99.00,saida
-2025-10-25,Combustível,transporte,250.00,saida
-
-HISTORICO DE ATENDIMENTO DO CLIENTE (data/historico_atendimento.csv):
-data,canal,tema,resumo,resolvido
-2025-09-15,chat,CDB,Cliente perguntou sobre rentabilidade e prazos,sim
-2025-09-22,telefone,Problema no app,Erro ao visualizar extrato foi corrigido,sim
-2025-10-01,chat,Tesouro Selic,Cliente pediu explicação sobre o funcionamento do Tesouro Direto,sim
-2025-10-12,chat,Metas financeiras,Cliente acompanhou o progresso da reserva de emergência,sim
-2025-10-25,email,Atualização cadastral,Cliente atualizou e-mail e telefone,sim
-
-PRODUTOS DISPONIVEIS PARA ENSINO (data/produtos_financeiros.json):
+```json
 [
   {
-    "nome": "Tesouro Selic",
-    "categoria": "renda_fixa",
-    "risco": "baixo",
-    "rentabilidade": "100% da Selic",
-    "aporte_minimo": 30.00,
-    "indicado_para": "Reserva de emergência e iniciantes"
+    "conceito": "Desejo vs Necessidade",
+    "explicacao": "Necessidade é o que a gente precisa pra viver (comida). Desejo é o que a gente quer ter (videogame).",
+    "exemplo": "Água é necessidade. Refrigerante é desejo!"
   },
   {
-    "nome": "CDB Liquidez Diária",
-    "categoria": "renda_fixa",
-    "risco": "baixo",
-    "rentabilidade": "102% do CDI",
-    "aporte_minimo": 100.00,
-    "indicado_para": "Quem busca segurança com rendimento diário"
-  },
-  {
-    "nome": "LCI/LCA",
-    "categoria": "renda_fixa",
-    "risco": "baixo",
-    "rentabilidade": "95% do CDI",
-    "aporte_minimo": 1000.00,
-    "indicado_para": "Quem pode esperar 90 dias (isento de IR)"
-  },
-  {
-    "nome": "Fundo Imobiliário (FII)",
-    "categoria": "fundo",
-    "risco": "medio",
-    "rentabilidade": "Dividend Yield (DY) costuma ficar entre 6% a 12% ao ano",
-    "aporte_minimo": 100.00,
-    "indicado_para": "Perfil moderado que busca diversificação e renda recorrente mensal"
-  },
-  {
-    "nome": "Fundo de Ações",
-    "categoria": "fundo",
-    "risco": "alto",
-    "rentabilidade": "Variável",
-    "aporte_minimo": 100.00,
-    "indicado_para": "Perfil arrojado com foco no longo prazo"
+    "conceito": "Os 5 Rs",
+    "explicacao": "Poderes para salvar o planeta: Repensar, Recusar, Reduzir, Reutilizar e Reciclar.",
+    "exemplo": "Usar o verso da folha para desenhar (Reutilizar)."
   }
 ]
-```
-
----
-
-## Exemplo de Contexto Montado
-
-> Mostre um exemplo de como os dados são formatados para o agente.
-
-O exemplo de contexto montado abaixo, se baiseia nos dados originais da base de conhecimento, mas os sintetiza deixando apenas as informações mais relevantes, otimizando assim o consumo de tokens. Entretanto, vale lembrar que mais importante do que economizar tokens, é ter todas as informações relevantes disponíveis em seu contexto.
-
-```
-DADOS DO CLIENTE:
-- Nome: João Silva
-- Perfil: Moderado
-- Objetivo: Construir reserva de emergência
-- Reserva atual: R$ 10.000 (meta: R$ 15.000)
-
-RESUMO DE GASTOS:
-- Moradia: R$ 1.380
-- Alimentação: R$ 570
-- Transporte: R$ 295
-- Saúde: R$ 188
-- Lazer: R$ 55,90
-- Total de saídas: R$ 2.488,90
-
-PRODUTOS DISPONÍVEIS PARA EXPLICAR:
-- Tesouro Selic (risco baixo)
-- CDB Liquidez Diária (risco baixo)
-- LCI/LCA (risco baixo)
-- Fundo Imobiliário - FII (risco médio)
-- Fundo de Ações (risco alto)
-```
+```json

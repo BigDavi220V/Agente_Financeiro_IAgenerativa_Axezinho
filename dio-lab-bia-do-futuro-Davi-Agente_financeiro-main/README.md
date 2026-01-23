@@ -1,10 +1,10 @@
 # 🎓 Axézinho - Educador Financeiro Inteligente
 
-> Agente de IA Generativa que ensina sobre educação fianceira para crianças e adolescente.
+> Agente de IA Generativa que ensina sobre educação financeira para crianças e adolescentes.
 
 ## 💡 O Que é o Axézinho?
 
-O Axézinho é um educador financeiro que **ensina**, não recomenda. Ele explica conceitos como organização financeira, moedas digitais, bancos, meios de pagamentos, regras de gastos envolvendo desejos e necessidades a e exemplos concretos baseados no perfil do cliente.
+O Axézinho é um educador financeiro que **ensina**, não recomenda. Ele explica conceitos como organização financeira, moedas digitais, bancos, meios de pagamentos, regras de gastos envolvendo desejos e necessidades e exemplos concretos baseados no perfil do cliente.
 
 **O que o Axézinho faz:**
 - ✅ Explica como o dinheiro funciona de um jeito divertido: Transforma conceitos chatos em histórias, usando a linguagem da "turma" e exemplos do dia a dia.
@@ -90,7 +90,6 @@ O Axézinho interage de forma **lúdica**, identificando intenções da criança
 
 ### 1️⃣ Cenário: "Desejo vs. Necessidade"
 
-Cenário 01: "Desejo vs. Necessidade" 
 **Criança:** "Quero comprar um brinquedo novo de 50 reais!"
 
 **Axézinho:** "Calma lá, explorador! 🛑 Antes de abrir a carteira, me diga: isso é um **DESEJO** ou uma **NECESSIDADE**? Lembre-se que sua meta é o Skate e faltam apenas R$ 150,00!"
