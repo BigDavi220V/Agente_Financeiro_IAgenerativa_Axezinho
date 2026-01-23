@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "titulo": "O Negociador",
+    "descricao": "Troque um brinquedo ou livro que você não usa mais com um amigo.",
+    "xp": 50,
+    "status": "pendente"
+  },
+  {
+    "id": 2,
+    "titulo": "Cofre Cheio",
+    "descricao": "Guarde 10% da sua mesada ou semanada no cofrinho.",
+    "xp": 100,
+    "status": "concluido"
+  },
+  {
+    "id": 3,
+    "titulo": "Caçador de Desperdício",
+    "descricao": "Identifique uma luz acesa sem necessidade em casa e apague.",
+    "xp": 30,
+    "status": "pendente"
+  }
+]

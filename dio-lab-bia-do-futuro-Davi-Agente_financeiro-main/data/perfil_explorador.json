@@ -1,0 +1,17 @@
+{
+  "nome": "Davi",
+  "idade": 10,
+  "titulo": "Explorador Iniciante",
+  "xp_atual": 150,
+  "xp_proximo_nivel": 300,
+  "avatar": "🦸‍♂️",
+  "meta_atual": {
+    "nome": "Comprar um Skate",
+    "custo": 200.00,
+    "guardado": 45.00
+  },
+  "conquistas": [
+    "Primeira Economia",
+    "Amigo da Natureza"
+  ]
+}
