@@ -7,12 +7,14 @@
 O Axézinho é um educador financeiro que **ensina**, não recomenda. Ele explica conceitos como organização financeira, moedas digitais, bancos, meios de pagamentos, regras de gastos envolvendo desejos e necessidades e exemplos concretos baseados no perfil do cliente.
 
 **O que o Axézinho faz:**
+
 - ✅ Explica como o dinheiro funciona de um jeito divertido: Transforma conceitos chatos em histórias, usando a linguagem da "turma" e exemplos do dia a dia.
 - ✅ Usa sua mesada e seus sonhos como exemplos: Em vez de falar de salário ou aluguel, ele usa os dados da criança (como a mesada, o dinheiro do lanche ou o preço daquele brinquedo novo) para ensinar.
 - ✅ Ensina a diferença entre "Eu Quero" e "Eu Preciso": Tira dúvidas sobre como usar o dinheiro com inteligência, ajudando a identificar o que é necessidade e o que é desejo.
 - ✅ Ajuda a encher o "Cofre dos Sonhos": Analisa os gastos da criança para mostrar onde dá para economizar e acelerar a conquista de objetivos (como comprar uma bicicleta ou um jogo).
 
 **O que o Axézinho NÃO faz:**
+
 - ❌ Não diz onde investir dinheiro de verdade: Ele explica o que é Poupança ou Bitcoin, mas nunca vai recomendar que a criança compre uma criptomoeda ou faça um investimento específico.
 - ❌ Não pede senhas e nem mexe na conta do banco: Ele respeita a segurança digital. Ele não tem acesso a cartões de crédito, senhas ou chaves PIX. Todo o planejamento é feito com "dinheiro de mentirinha" ou dados da mesada que a criança informar.
 - ❌ Não substitui a autorização dos pais: Ele é um amigo para tirar dúvidas, mas não decide nada. Ele sempre vai lembrar que, para realizar desejos maiores ou mexer com dinheiro, é preciso falar com os responsáveis.
@@ -37,12 +39,13 @@ flowchart TD
 ```
 
 **Stack:**
+
 - Interface: Streamlit
 - Dados: JSON/CSV mockados
 
 ## 📁 Estrutura do Projeto
 
-```
+```text
 axezinho-economia-kids/
 ├── data/                          # O "Baú do Tesouro" (Base de Conhecimento)
 │   ├── perfil_explorador.json     # Perfil da criança (Nível, XP, Avatar)
@@ -110,13 +113,12 @@ O Axézinho interage de forma **lúdica**, identificando intenções da criança
 
 **Axézinho:** "🎯 Estamos de olho no prêmio! Sua meta é **Comprar um Skate**. Você já guardou R$ 45,00 e faltam R$ 155,00. Se você fizer a missão 'O Poupador' hoje, a gente chega lá mais rápido!"
 
-
 ## 📊 Métricas de Avaliação
 
 > 💡 Diferente de um **LLM generativo**, aqui avaliamos a **lógica pedagógica** e o **engajamento**, já que as respostas são **controladas e seguras**.
 
 | Métrica | Objetivo | Como testar? |
-|---------|----------|---------------|
+| --- | --- | --- |
 | 1️⃣ **Engajamento (Gamificação)** | A criança sente vontade de completar missões? | Verificar se o usuário clica nas missões e tenta "subir de nível". |
 | 2️⃣ **Didática** | A linguagem é adequada para 8-12 anos? | Testar se o termo "Necessidade vs Desejo" é compreendido nas respostas. |
 | 3️⃣ **Segurança de Conteúdo** | O sistema bloqueia conselhos de investimento real? | Perguntar "Onde invisto 1 milhão?" e verificar se ele nega recomendação. |

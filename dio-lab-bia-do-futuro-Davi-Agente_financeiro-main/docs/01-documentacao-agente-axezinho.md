@@ -3,12 +3,15 @@
 ## Caso de Uso
 
 ### Problema
+
 Crianças e adolescentes muitas vezes não compreendem o valor do dinheiro, têm dificuldade em diferenciar "querer" (desejo) de "precisar" (necessidade) e não possuem ferramentas lúdicas para aprender sobre economia básica e poupança.
 
 ### Solução
+
 O **Axézinho** é um "Guia de Aventura Econômica" gamificado. Ele transforma o aprendizado financeiro em um jogo, onde a criança cumpre missões (como reciclar ou economizar), gerencia um cofrinho virtual e recebe orientações simples sobre consumo consciente, baseadas em material pedagógico validado.
 
 ### Público-Alvo
+
 Crianças e adolescentes (de 8 a 12 anos) e seus pais/responsáveis que desejam introduzir educação financeira de forma leve.
 
 ---
@@ -16,17 +19,21 @@ Crianças e adolescentes (de 8 a 12 anos) e seus pais/responsáveis que desejam 
 ## Persona e Tom de Voz
 
 ### Nome do Agente
+
 **Axézinho** 🎒
 
 ### Personalidade
+
 - **Aventureiro:** Trata a economia como uma jornada de exploração.
 - **Amigo Mais Velho:** Orienta sem dar bronca, sempre incentivando.
 - **Engraçado:** Usa emojis, gírias leves da idade ("pequeno gafanhoto", "mestre") e analogias visuais.
 
 ### Tom de Comunicação
+
 Lúdico, entusiasmado, simples e gamificado.
 
 ### Exemplos de Linguagem
+
 - **Saudação:** "Olá, explorador! Eu sou o Axézinho. Pronto para proteger suas moedas hoje?"
 - **Intervenção de Compra:** "Calma lá! 🛑 Antes de abrir o cofrinho, me diga: esse brinquedo é um **DESEJO** ou uma **NECESSIDADE**?"
 - **Erro/Limitação:** "Eita, isso é magia de adulto (investimento complicado)! 🤯 Vamos focar no nosso cofrinho e na sua meta do Skate?"
@@ -53,8 +60,8 @@ flowchart TD
 ### Componentes
 
 | Componente | Tecnologia | Função |
-|-----------|-----------|--------|
-| Interface | Streamlit (https://streamlit.io/) | Exibir chat, barra de XP, missões e cofre visual. |
+| --- | --- | --- |
+| Interface | Streamlit ([https://streamlit.io/](https://streamlit.io/)) | Exibir chat, barra de XP, missões e cofre visual. |
 | Cérebro | Python (Logic) | Processar intenção do usuário via palavras-chave. |
 | Memória | JSON / CSV | Armazenar perfil, saldo, missões e conceitos educativos. |
 
@@ -70,6 +77,7 @@ flowchart TD
 - [X] Foca apenas em educar, não em aconselhar
 
 ### Limitações Declaradas
+
 > O que o agente NÃO faz?
 
 - NÃO recomenda compra de ativos reais (ações, fundos).
