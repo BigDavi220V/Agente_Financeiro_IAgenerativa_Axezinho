@@ -33,6 +33,7 @@ flowchart TD
 
     Brain --> Output["Resposta Lúdica"]
     Output --> UI
+
 ```
 
 **Stack:**
@@ -89,6 +90,7 @@ O Axézinho interage de forma **lúdica**, identificando intenções da criança
 
 ### 1️⃣ Cenário: "Desejo vs. Necessidade"
 
+Cenário 01: "Desejo vs. Necessidade" 
 **Criança:** "Quero comprar um brinquedo novo de 50 reais!"
 
 **Axézinho:** "Calma lá, explorador! 🛑 Antes de abrir a carteira, me diga: isso é um **DESEJO** ou uma **NECESSIDADE**? Lembre-se que sua meta é o Skate e faltam apenas R$ 150,00!"
