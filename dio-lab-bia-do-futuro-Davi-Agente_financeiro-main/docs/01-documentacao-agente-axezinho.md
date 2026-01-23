@@ -42,7 +42,7 @@ Como o projeto foca em segurança e baixo custo computacional, removemos o uso d
 ```mermaid
 flowchart TD
     A["Criança / Usuário"] --> B["Interface Gamificada (Streamlit)"]
-    B --> C{Lógica de Regras (Python)}
+    B --> C{"Lógica de Regras (Python)"}
     C -- "Palavra-chave: Comprar" --> D[Verificador de Necessidade]
     C -- "Palavra-chave: O que é?" --> E[Consulta Enciclopédia JSON]
     C -- "Palavra-chave: Missão" --> F[Gerenciador de Gamificação]
