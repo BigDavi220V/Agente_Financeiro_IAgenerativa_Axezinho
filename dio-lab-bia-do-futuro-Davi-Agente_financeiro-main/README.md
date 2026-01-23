@@ -2,7 +2,7 @@
 
 > Agente de IA Generativa que ensina sobre educação fianceira para crianças e adolescente.
 
-## 💡 O Que é o Edu?
+## 💡 O Que é o Axézinho?
 
 O Axézinho é um educador financeiro que **ensina**, não recomenda. Ele explica conceitos como organização financeira, moedas digitais, bancos, meios de pagamentos, regras de gastos envolvendo desejos e necessidades a e exemplos concretos baseados no perfil do cliente.
 
@@ -21,18 +21,19 @@ O Axézinho é um educador financeiro que **ensina**, não recomenda. Ele explic
 
 ```mermaid
 flowchart TD
-    User[Criança / Responsável] --> UI[Interface Gamificada (Streamlit)]
-    UI --> Guard[Filtro de Segurança]
-    Guard --> Brain[LLM - Persona Axézinho]
-    
-    subgraph "Base de Conhecimento Adaptada"
-        Brain <--> Profile[Perfil do Poupador - JSON]
-        Brain <--> Missions[Histórico de Missões - CSV]
-        Brain <--> Content[Conteúdo Educativo - PDF]
+    User["Criança / Responsável"] --> UI["Interface Gamificada - Streamlit"]
+    UI --> Guard["Filtro de Segurança"]
+    Guard --> Brain["LLM - Persona Azezinho"]
+
+    subgraph Base["Base de Conhecimento Adaptada"]
+        Brain <--> Profile["Perfil do Poupador - JSON"]
+        Brain <--> Missions["Histórico de Missões - CSV"]
+        Brain <--> Content["Conteúdo Educativo - PDF"]
     end
-    
-    Brain --> Output[Resposta Lúdica]
+
+    Brain --> Output["Resposta Lúdica"]
     Output --> UI
+
 ```
 
 **Stack:**
@@ -80,7 +81,7 @@ O jogo abrirá automaticamente no seu navegador (geralmente em http://localhost:
 ## 🎯 Exemplo de Uso
 O Axézinho interage de forma lúdica, identificando intenções da criança (como "querer comprar" ou "aprender") e respondendo com base no perfil do explorador.
 
-Cenário 01: "Desejo vs. Necessidade" 
+**Cenário 01:** "Desejo vs. Necessidade" 
 **Criança:** "Quero comprar um brinquedo novo de 50 reais!"
 **Axézinho:** "Calma lá, explorador! 🛑 Antes de abrir a carteira, me diga: isso é um DESEJO ou uma NECESSIDADE? Lembre-se que sua meta é o Skate e faltam apenas R$ 150,00!"
 Cenário 02: "Aprendendo Conceitos (Enciclopédia)"
