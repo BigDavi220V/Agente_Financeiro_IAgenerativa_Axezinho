@@ -1,81 +1,73 @@
-# Avaliação e Métricas
+# Avaliação e Métricas - Axézinho 🎒
 
-> [!TIP]
-> **Prompt usado para esta etapa:**
-> 
-> Crie um plano de avaliação pro agente "Edu" com 3 métricas: assertividade, segurança e coerência. Inclua 4 cenários de teste e um formulário simples de feedback. Preencha o template abaixo.
->
-> [cole ou anexe o template `04-metricas.md` pra contexto]
+Como o Axézinho opera com uma arquitetura baseada em regras (sem LLM generativo), nossa avaliação foca na precisão da detecção de intenção e na eficácia da gamificação.
 
+## Como Avaliar o Agente
 
-## Como Avaliar seu Agente
+A avaliação é dividida em dois pilares:
 
-A avaliação pode ser feita de duas formas complementares:
-
-1. **Testes estruturados:** Você define perguntas e respostas esperadas;
-2. **Feedback real:** Pessoas testam o agente e dão notas.
+1.  **Testes de Lógica (Funcional):** Verificar se as palavras-chave acionam as regras corretas (ex: "comprar" deve acionar "Verificador de Necessidade").
+2.  **Testes de Experiência (Gamificação):** Verificar se a criança entende a dinâmica de ganhar XP e se sente motivada a continuar.
 
 ---
 
 ## Métricas de Qualidade
 
-| Métrica | O que avalia | Exemplo de teste |
+| Métrica | O que avalia | Exemplo de Sucesso |
 |---------|--------------|------------------|
-| **Assertividade** | O agente respondeu o que foi perguntado? | Perguntar o saldo e receber o valor correto |
-| **Segurança** | O agente evitou inventar informações? | Perguntar algo fora do contexto e ele admitir que não sabe |
-| **Coerência** | A resposta faz sentido para o perfil do cliente? | Sugerir investimento conservador para cliente conservador |
-
-> [!TIP]
-> Peça para 3-5 pessoas (amigos, família, colegas) testarem seu agente e avaliarem cada métrica com notas de 1 a 5. Isso torna suas métricas mais confiáveis! Caso use os arquivos da pasta `data`, lembre-se de contextualizar os participantes sobre o **cliente fictício** representado nesses dados.
+| **Precisão de Intenção** | O sistema identificou a palavra-chave correta? | Usuário digita "gastar" e o sistema responde com o fluxo de "Saída de dinheiro". |
+| **Segurança Pedagógica** | O bloqueio de temas adultos funcionou? | Usuário pergunta sobre "Bitcoin" e o sistema redireciona para "Poupança" sem dar dicas de investimento. |
+| **Engajamento (XP)** | A gamificação está funcionando? | O usuário completa uma missão e o saldo de XP/Nível é atualizado visualmente na hora. |
+| **Didática** | A explicação veio da Enciclopédia correta? | Ao perguntar "O que é Juros?", a resposta é exatamente a definição simplificada do arquivo JSON. |
 
 ---
 
 ## Exemplos de Cenários de Teste
 
-Crie testes simples para validar seu agente:
+Execute estes testes para validar a lógica do `app.py`:
 
-### Teste 1: Consulta de gastos
-- **Pergunta:** "Quanto gastei com alimentação?"
-- **Resposta esperada:** R$570,00 (baseado no `transacoes.csv`)
-- **Resultado:** [X] Correto  [ ] Incorreto
+### Teste 1: Fluxo de Consumo Consciente
+- **Ação:** Digitar "Quero comprar um slime de 20 reais".
+- **Comportamento Esperado:** O agente deve detectar a intenção de compra e devolver a pergunta: *"Isso é um desejo ou uma necessidade?"*.
+- **Resultado:** [ ] Passou [ ] Falhou
 
-### Teste 2: Recomendação de produto
-- **Pergunta:** "Qual investimento você recomenda para mim?"
-- **Resposta esperada:** Produto compatível com o perfil do cliente
-- **Resultado:** [X] Correto  [ ] Incorreto
+### Teste 2: Consulta Educativa (Enciclopédia)
+- **Ação:** Perguntar "O que são os 5 Rs?".
+- **Comportamento Esperado:** O agente deve buscar o termo no `enciclopedia_economia.json` e exibir a explicação sobre Reciclar/Reutilizar.
+- **Resultado:** [ ] Passou [ ] Falhou
 
-### Teste 3: Pergunta fora do escopo
-- **Pergunta:** "Qual a previsão do tempo?"
-- **Resposta esperada:** Agente informa que só trata de finanças
-- **Resultado:** [X] Correto  [ ] Incorreto
+### Teste 3: Bloqueio de Conteúdo (Edge Case)
+- **Ação:** Perguntar "Qual a melhor ação da bolsa para ficar rico?".
+- **Comportamento Esperado:** O agente **NÃO** deve recomendar ativos. Deve responder com a mensagem padrão de segurança (ex: "Isso é magia de adulto, vamos focar no seu cofrinho?").
+- **Resultado:** [ ] Passou [ ] Falhou
 
-### Teste 4: Informação inexistente
-- **Pergunta:** "Quanto rende o produto BBDC3 na Bovespa?"
-- **Resposta esperada:** Agente admite não ter essa informação
-- **Resultado:** [X] Correto  [ ] Incorreto
+### Teste 4: Gamificação e Meta
+- **Ação:** Perguntar "Quanto falta para o meu skate?".
+- **Comportamento Esperado:** O agente deve ler o `perfil_explorador.json`, calcular (Meta - Guardado) e responder o valor exato que falta.
+- **Resultado:** [ ] Passou [ ] Falhou
 
 ---
 
-## Formulário de Feedback (Sugestão)
+## Formulário de Feedback (Playtest com Crianças)
 
-Use com os participantes do teste:
+Ao testar com o público-alvo (8-12 anos), use perguntas adaptadas:
 
-| Métrica | Pergunta | Nota (1-5) |
+| Critério | Pergunta para a Criança | Nota (1-5 ⭐) |
 |---------|----------|------------|
-| Assertividade | "As respostas responderam suas perguntas?" | ___ |
-| Segurança | "As informações pareceram confiáveis?" | ___ |
-| Coerência | "A linguagem foi clara e fácil de entender?" | ___ |
+| **Diversão** | "Você gostou de conversar com o Axézinho?" | ___ |
+| **Clareza** | "Você entendeu o que ele explicou sobre dinheiro?" | ___ |
+| **Motivação** | "Você ficou com vontade de cumprir as missões para ganhar XP?" | ___ |
+| **Visual** | "Você gostou dos emojis e da barra de nível?" | ___ |
 
-**Comentário aberto:** O que você achou desta experiência e o que poderia melhorar?
+**Comentário da Criança:**
+> (Ex: "Achei engraçado ele me chamar de gafanhoto", "Queria poder trocar a cor do cofrinho")
 
 ---
 
-## Resultados
+## Resultados Esperados
 
-Após os testes, registre suas conclusões:
+Após a rodada de testes, esperamos validar:
 
-**O que funcionou bem:**
-- [Liste aqui]
-
-**O que pode melhorar:**
-- [Liste aqui]
+1.  **Zero Alucinação:** Como as respostas são fixas (hardcoded/JSON), a taxa de respostas inventadas deve ser 0%.
+2.  **Retenção:** A criança deve interagir por pelo menos 3 turnos (Pergunta -> Resposta -> Nova Ação).
+3.  **Segurança:** Nenhum conselho financeiro real (CVM/B3) deve ser emitido.
