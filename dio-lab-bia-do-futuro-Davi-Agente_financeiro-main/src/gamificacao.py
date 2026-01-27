@@ -1,27 +1,19 @@
-def calcular_nivel(perfil):
+def calcular_progresso_nivel(perfil):
     """
-    Calcula a porcentagem de progresso para o próximo nível.
-    Retorna um float entre 0.0 e 1.0.
+    Retorna a % de progresso para o próximo nível (0.0 a 1.0)
     """
     xp_atual = perfil.get('xp_atual', 0)
     xp_prox = perfil.get('xp_proximo_nivel', 100)
     
     if xp_prox == 0: return 1.0
-    
-    progresso = xp_atual / xp_prox
-    return min(progresso, 1.0)
+    return min(xp_atual / xp_prox, 1.0)
 
-def verificar_conquista(perfil, nova_xp):
+def calcular_progresso_meta(perfil):
     """
-    Simula o ganho de XP e verifica se subiu de nível.
+    Retorna a % de progresso da meta financeira
     """
-    perfil['xp_atual'] += nova_xp
+    guardado = perfil['meta_atual']['guardado']
+    custo = perfil['meta_atual']['custo']
     
-    # Lógica simples de Level Up
-    if perfil['xp_atual'] >= perfil['xp_proximo_nivel']:
-        perfil['titulo'] = "Mestre da Economia 🌟"
-        perfil['xp_atual'] = perfil['xp_atual'] - perfil['xp_proximo_nivel']
-        perfil['xp_proximo_nivel'] = int(perfil['xp_proximo_nivel'] * 1.5) # Próximo nível fica mais difícil
-        return True, perfil # Retorna True se subiu de nível
-        
-    return False, perfil
+    if custo == 0: return 1.0
+    return min(guardado / custo, 1.0)

@@ -4,10 +4,10 @@ import os
 
 def carregar_dados():
     """
-    Carrega os arquivos JSON e CSV da pasta data/.
-    Retorna None se algum arquivo estiver faltando.
+    Carrega os arquivos da base de conhecimento do Axézinho.
     """
     try:
+        # Ajuste de caminho para garantir que encontre a pasta data
         base_path = os.path.join(os.path.dirname(__file__), '..', 'data')
         
         perfil = json.load(open(os.path.join(base_path, 'perfil_explorador.json'), encoding='utf-8'))
@@ -18,20 +18,42 @@ def carregar_dados():
         if os.path.exists(csv_path):
             cofrinho = pd.read_csv(csv_path)
         else:
-            # Cria um dataframe vazio se não existir
             cofrinho = pd.DataFrame(columns=['data', 'descricao', 'tipo', 'valor', 'categoria'])
             
         return perfil, enciclopedia, missoes, cofrinho
     except FileNotFoundError as e:
-        print(f"Erro ao carregar arquivo: {e}")
+        print(f"Erro ao carregar dados: {e}")
         return None, None, None, None
 
-def buscar_conceito(termo, enciclopedia):
+def gerar_contexto_llm(perfil, enciclopedia, missoes, cofrinho):
     """
-    Procura um termo na enciclopédia (busca simples por palavra-chave).
+    Transforma os dados JSON/CSV em um texto legível para o Ollama.
     """
-    termo = termo.lower()
-    for item in enciclopedia:
-        if item['conceito'].lower() in termo or termo in item['conceito'].lower():
-            return f"🤓 **{item['conceito']}:** {item['explicacao']}\n\n*Exemplo:* {item['exemplo']}"
-    return None
+    
+    # Calcula saldo e falta para meta
+    total_guardado = perfil['meta_atual']['guardado']
+    meta_valor = perfil['meta_atual']['custo']
+    falta = meta_valor - total_guardado
+    
+    contexto = f"""
+    === PERFIL DO EXPLORADOR ===
+    Nome: {perfil['nome']}
+    Idade: {perfil['idade']} anos
+    Nível Atual: {perfil['titulo']} (XP: {perfil['xp_atual']})
+    
+    === META (SONHO) ===
+    Objetivo: {perfil['meta_atual']['nome']}
+    Custo Total: R$ {meta_valor:.2f}
+    Já Guardou: R$ {total_guardado:.2f}
+    Falta: R$ {falta:.2f}
+    
+    === HISTÓRICO DO COFRINHO (Últimas transações) ===
+    {cofrinho.tail(5).to_string(index=False) if not cofrinho.empty else "Nenhuma transação ainda."}
+    
+    === MISSÕES DISPONÍVEIS ===
+    {json.dumps(missoes, indent=2, ensure_ascii=False)}
+    
+    === CONCEITOS QUE VOCÊ SABE ENSINAR (ENCICLOPÉDIA) ===
+    {json.dumps(enciclopedia, indent=2, ensure_ascii=False)}
+    """
+    return contexto

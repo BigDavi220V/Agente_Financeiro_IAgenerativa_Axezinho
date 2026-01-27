@@ -1,153 +1,130 @@
 import streamlit as st
+import requests
 import pandas as pd
-import random
-from conteudo import carregar_dados, buscar_conceito
-from gamificacao import calcular_nivel
+import json
+from conteudo import carregar_dados, gerar_contexto_llm
+from gamificacao import calcular_progresso_nivel, calcular_progresso_meta
 
-# ============ CONFIGURAÇÃO INICIAL ============
-st.set_page_config(page_title="Axézinho - Aventura Econômica", page_icon="🎒")
+# ============ CONFIGURAÇÃO ============
+# URL padrão do Ollama (como no projeto do falvojr)
+OLLAMA_URL = "http://localhost:11434/api/generate"
+MODELO = "qwen2:0.5b" 
 
-# ============ CARREGAMENTO DE DADOS ============
+# ============ CARREGAR DADOS ============
 perfil, enciclopedia, missoes, cofrinho = carregar_dados()
 
 if perfil is None:
-    st.error("🚨 Erro: Não encontrei os arquivos na pasta 'data'. Verifique se eles existem!")
+    st.error("🚨 Erro Crítico: Base de dados não encontrada na pasta 'data/'!")
     st.stop()
 
-# ============ CÉREBRO DO AXÉZINHO (SEM OLLAMA) ============
-def responder_local(msg):
-    msg = msg.lower()
+# ============ SYSTEM PROMPT (PERSONA) ============
+# Definido com base no arquivo docs/03-prompts.md
+SYSTEM_PROMPT = """
+EU SOU O AXÉZINHO 🎒, um guia de aventuras econômicas para crianças.
+Sua missão é ensinar educação financeira de forma lúdica e gamificada.
+
+REGRAS DE COMPORTAMENTO:
+1. Use a 'ENCICLOPÉDIA' fornecida no contexto para explicar conceitos. Se não souber, diga que é "magia de adulto".
+2. Se a criança falar em GASTAR ou COMPRAR, pergunte sempre: "Isso é um DESEJO ou uma NECESSIDADE?".
+3. Incentive a completar as MISSÕES para ganhar XP.
+4. Use os dados do PERFIL para personalizar (fale o nome, quanto falta pro skate, etc).
+5. NUNCA recomende investimentos reais (Bolsa, Cripto). Redirecione para o "Cofrinho".
+6. Seja curto, use emojis e fale como um amigo aventureiro.
+"""
+
+# ============ FUNÇÃO DE COMUNICAÇÃO COM OLLAMA ============
+def perguntar_axezinho(msg_usuario):
+    # 1. Gera o contexto atualizado com os dados mais recentes
+    contexto_dados = gerar_contexto_llm(perfil, enciclopedia, missoes, cofrinho)
     
-    # 1. Perguntas sobre COMPRAR ou GASTAR
-    if any(x in msg for x in ["comprar", "gastar", "quero", "preço"]):
-        saldo_meta = perfil['meta_atual']['custo'] - perfil['meta_atual']['guardado']
-        respostas = [
-            f"Calma lá, explorador! 🛑 Antes de abrir a carteira, me diga: isso é um **DESEJO** ou uma **NECESSIDADE**?",
-            f"Hmm... comprar é legal, mas você lembra da sua meta? Ainda faltam R$ {saldo_meta:.2f} para o seu {perfil['meta_atual']['nome']}. Será que vale a pena gastar agora?",
-            "Opa! Vamos usar a regra dos 5 Rs? Será que dá pra **REUTILIZAR** algo que você já tem em vez de comprar?"
-        ]
-        return random.choice(respostas)
+    # 2. Monta o prompt final
+    prompt_completo = f"""
+    {SYSTEM_PROMPT}
 
-    # 2. Perguntas sobre CONCEITOS (busca na enciclopédia)
-    conceito_encontrado = buscar_conceito(msg, enciclopedia)
-    if conceito_encontrado:
-        return conceito_encontrado
+    DADOS ATUAIS DO JOGO (Contexto):
+    {contexto_dados}
 
-    # 3. Perguntas sobre META ou SONHO
-    if any(x in msg for x in ["meta", "sonho", "skate", "bicicleta", "quanto falta"]):
-        falta = perfil['meta_atual']['custo'] - perfil['meta_atual']['guardado']
-        return f"🎯 Estamos de olho no prêmio! Sua meta é **{perfil['meta_atual']['nome']}**.\n\nVocê já guardou **R$ {perfil['meta_atual']['guardado']:.2f}** e faltam apenas **R$ {falta:.2f}**. Se você fizer uma missão hoje, a gente chega lá mais rápido!"
+    PERGUNTA DO EXPLORADOR: {msg_usuario}
+    """
 
-    # 4. Perguntas sobre GANHAR DINHEIRO ou MISSÃO
-    if any(x in msg for x in ["ganhar", "dinheiro", "missão", "trabalho"]):
-        return "Quer moedas? 🪙 Então mãos à obra! Dê uma olhada na aba **'Pergaminho de Missões'**. Se você completar o desafio 'O Negociador', ganha XP e entende como o escambo funciona!"
+    try:
+        # Chamada à API do Ollama (igual ao exemplo do falvojr)
+        payload = {
+            "model": MODELO,
+            "prompt": prompt_completo,
+            "stream": False
+        }
+        r = requests.post(OLLAMA_URL, json=payload)
+        
+        if r.status_code == 200:
+            return r.json()['response']
+        else:
+            return f"Ocorreu um erro no meu cérebro digital... (Erro {r.status_code})"
+            
+    except requests.exceptions.ConnectionError:
+        return "🔌 Não consegui conectar ao Ollama! Verifique se ele está rodando com 'ollama serve'."
 
-    # 5. Saudações
-    if any(x in msg for x in ["oi", "olá", "ola", "bom dia", "boa tarde"]):
-        return f"Olá, {perfil['nome']}! 🖖 Eu sou o Axézinho. Estou pronto para proteger suas moedas! O que vamos aprender hoje?"
+# ============ INTERFACE (STREAMLIT) ============
+st.set_page_config(page_title="Axézinho - Aventura", page_icon="🎒", layout="wide")
 
-    # 6. Resposta Padrão (Fallback)
-    return "Eita, ainda estou aprendendo essa palavra! 🤯 Tente perguntar sobre 'comprar', 'minha meta' ou 'escambo'. Ou veja suas missões!"
-
-# ============ INTERFACE GRÁFICA ============
-
-# --- BARRA LATERAL (PERFIL) ---
+# --- SIDEBAR (GAMIFICAÇÃO) ---
 with st.sidebar:
-    st.title(f"{perfil['avatar']} Perfil")
-    st.write(f"**Explorador:** {perfil['nome']}")
-    st.write(f"**Nível:** {perfil['titulo']}")
+    st.image("https://img.freepik.com/vetores-gratis/cofrinho-fofo-com-moeda_1308-133566.jpg?w=200", width=150) # Placeholder
+    st.title(f"Explorador {perfil['nome']}")
+    st.caption(f"Nível: {perfil['titulo']}")
     
-    # Barra de XP com cor personalizada
-    xp_pct = calcular_nivel(perfil)
+    # Barra de XP
+    xp_pct = calcular_progresso_nivel(perfil)
     st.progress(xp_pct)
-    st.caption(f"XP: {perfil['xp_atual']} / {perfil['xp_proximo_nivel']}")
+    st.write(f"XP: {perfil['xp_atual']} / {perfil['xp_proximo_nivel']}")
     
     st.markdown("---")
-    st.subheader("🏆 Meta Atual")
-    st.info(f"{perfil['meta_atual']['nome']}")
-    col1, col2 = st.columns(2)
-    col1.metric("Guardado", f"R$ {perfil['meta_atual']['guardado']}")
-    col2.metric("Meta", f"R$ {perfil['meta_atual']['custo']}")
+    st.subheader("🎯 Meta: " + perfil['meta_atual']['nome'])
+    
+    # Barra da Meta
+    meta_pct = calcular_progresso_meta(perfil)
+    st.progress(meta_pct)
+    
+    c1, c2 = st.columns(2)
+    c1.metric("Guardado", f"R$ {perfil['meta_atual']['guardado']}")
+    c2.metric("Falta", f"R$ {perfil['meta_atual']['custo'] - perfil['meta_atual']['guardado']:.2f}")
 
 # --- ÁREA PRINCIPAL ---
-st.title("🎒 Axézinho: Jornada Econômica")
+st.title("🎒 Chat com Axézinho")
+st.markdown("Converse sobre **missões**, **economia** ou peça ajuda para **juntar moedas**!")
 
-# Abas para organizar a tela
-tab_chat, tab_missoes, tab_cofre = st.tabs(["💬 Conversar com Axézinho", "📜 Pergaminho de Missões", "💰 Cofrinho Virtual"])
+# Histórico de Chat
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-# ABA 1: CHAT
-with tab_chat:
-    st.markdown("""
-    <div style='background-color: #f0f2f6; padding: 10px; border-radius: 10px; margin-bottom: 20px;'>
-        👋 Oi! Eu sou seu guia. Pergunte coisas como: 
-        <b>"O que é escambo?"</b>, <b>"Quero comprar um doce"</b> ou <b>"Quanto falta pra minha meta?"</b>
-    </div>
-    """, unsafe_allow_html=True)
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-    # Histórico de mensagens na sessão
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+# Input do Usuário
+if prompt := st.chat_input("Digite aqui, pequeno gafanhoto..."):
+    # Exibe msg usuário
+    st.chat_message("user").markdown(prompt)
+    st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Mostra mensagens antigas
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-
-    # Campo de entrada
-    if prompt := st.chat_input("Digite sua dúvida aqui..."):
-        # Mostra pergunta do usuário
-        st.chat_message("user").markdown(prompt)
-        st.session_state.messages.append({"role": "user", "content": prompt})
-
-        # Axézinho responde (Simulação local)
-        with st.chat_message("assistant"):
-            with st.spinner("Consultando meu diário..."):
-                resposta = responder_local(prompt)
-                st.markdown(resposta)
-        st.session_state.messages.append({"role": "assistant", "content": resposta})
-
-# ABA 2: MISSÕES
-with tab_missoes:
-    st.header("Missões Disponíveis")
-    st.write("Complete tarefas para ganhar XP e subir de nível!")
+    # Chama o Ollama
+    with st.chat_message("assistant"):
+        with st.spinner("Consultando o mapa do tesouro... 🗺️"):
+            resposta = perguntar_axezinho(prompt)
+            st.markdown(resposta)
     
-    for missao in missoes:
-        with st.container():
-            col_a, col_b = st.columns([0.1, 0.9])
-            concluida = (missao.get('status') == 'concluido')
-            
-            with col_a:
-                st.checkbox("Done", value=concluida, key=f"chk_{missao['id']}", disabled=True)
-            with col_b:
-                st.subheader(f"{missao['titulo']} (+{missao['xp']} XP)")
-                st.write(missao['descricao'])
-                if concluida:
-                    st.success("Completada! 🎉")
-                else:
-                    st.info("Em andamento...")
-            st.divider()
+    # Salva resposta
+    st.session_state.messages.append({"role": "assistant", "content": resposta})
 
-# ABA 3: COFRE
-with tab_cofre:
-    st.header("Seu Diário Financeiro")
-    
-    # Métricas rápidas
-    total_entrada = cofrinho[cofrinho['tipo'] == 'ganho']['valor'].sum()
-    total_saida = cofrinho[cofrinho['tipo'] == 'gasto']['valor'].sum()
-    saldo = total_entrada - total_saida
-    
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Ganhei", f"R$ {total_entrada:.2f}", delta_color="normal")
-    c2.metric("Gastei", f"R$ {total_saida:.2f}", delta_color="inverse")
-    c3.metric("Saldo Atual", f"R$ {saldo:.2f}")
-    
-    st.subheader("Histórico")
-    # Estilizando a tabela
-    def cor_tipo(val):
-        color = '#d4edda' if val == 'ganho' else '#f8d7da'
-        return f'background-color: {color}'
+# --- ABAS DE DADOS (VISUALIZAÇÃO) ---
+# Adicionamos isso para o usuário ver os dados que o LLM está lendo
+st.divider()
+tab1, tab2 = st.tabs(["📜 Missões Ativas", "💰 Extrato do Cofrinho"])
 
-    st.dataframe(
-        cofrinho.style.applymap(cor_tipo, subset=['tipo']),
-        use_container_width=True
-    )
+with tab1:
+    for m in missoes:
+        status = "✅" if m['status'] == 'concluido' else "⬜"
+        st.write(f"**{status} {m['titulo']}** (+{m['xp']} XP): {m['descricao']}")
+
+with tab2:
+    st.dataframe(cofrinho, use_container_width=True)
