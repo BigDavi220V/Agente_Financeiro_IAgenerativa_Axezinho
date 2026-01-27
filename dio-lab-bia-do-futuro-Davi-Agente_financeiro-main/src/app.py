@@ -8,8 +8,14 @@ from gamificacao import calcular_progresso_nivel, calcular_progresso_meta
 # ============ CONFIGURAÇÃO ============
 # URL padrão do Ollama (como no projeto do falvojr)
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODELO = "qwen3-embedding:0.6b" 
-
+MODELO = "llama3.2:1b" 
+#alguns modelos caso for testar outros:
+# MODELO = "qwen3:1.7b"
+# MODELO = "gpt-oss"
+# MODELO = "deepseek-r1:1.5b"
+# MODELO = "llama3.2:1b"
+# MODELO = "llama3.2:latest"
+#============================================================================================================================
 # ============ CARREGAR DADOS ============
 perfil, enciclopedia, missoes, cofrinho = carregar_dados()
 
