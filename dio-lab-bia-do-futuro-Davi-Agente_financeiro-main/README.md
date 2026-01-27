@@ -77,7 +77,7 @@ axezinho-economia-kids/
 ollama pull qwen3:1.7b
 ollama serve
 ```
-#*Alternativas de modelos*
+#Alternativas de modelos:
 #### Modelo = "qwen3:1.7b"
 #### Modelo = "qwen3:0.6b"
 #### Modelo = "deepseek-r1:1.5b"
@@ -85,6 +85,7 @@ ollama serve
 #### Modelo = "llama3.2:1b"
 #### Modelo = "gpt-oss"
 
+OBS: Nesse projeto é utilizado o modelo qwen3:1.7b de inteligência artificial. É pequeno, porém preciso nas respostas desde que tenha uma base de dados sólida.
 Certifique-se de ter o **Python** instalado.
 
 ```bash
