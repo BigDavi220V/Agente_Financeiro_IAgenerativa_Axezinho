@@ -70,19 +70,32 @@ axezinho-economia-kids/
 > 💡 Como o Axézinho agora roda com lógica local (Python puro), você não precisa instalar o Ollama ou baixar modelos pesados. O projeto é **extremamente leve**.
 
 ### 1️⃣ Clonar e Instalar Dependências
+###  Instalar Ollama
+
+```bash
+# Baixar em: ollama.com
+ollama pull qwen3:1.7b
+ollama serve
+```
+#*Alternativas de modelos*
+#### Modelo = "qwen3:1.7b"
+#### Modelo = "qwen3:0.6b"
+#### Modelo = "deepseek-r1:1.5b"
+#### Modelo = "llama3.2:latest"
+#### Modelo = "llama3.2:1b"
+#### Modelo = "gpt-oss"
 
 Certifique-se de ter o **Python** instalado.
 
 ```bash
-# Instale as bibliotecas da interface e manipulação de dados
-pip install streamlit pandas
+pip install streamlit pandas requests
 ```
 
 ### 2️⃣ Rodar o Axézinho
 
 ```bash
-# Execute o comando na raiz do projeto
-streamlit run src/app.py
+# Execute o comando na raiz do projeto. Isso no terminal da IDE
+streamlit run .\dio-lab-bia-do-futuro-Davi-Agente_financeiro-main\src\app.py
 ```
 
 O jogo abrirá automaticamente no seu navegador (geralmente em [`http://localhost:8501`](http://localhost:8501)).
