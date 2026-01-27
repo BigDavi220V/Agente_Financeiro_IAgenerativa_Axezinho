@@ -1,23 +1,30 @@
 [
   {
     "id": 1,
-    "titulo": "O Negociador",
-    "descricao": "Troque um brinquedo ou livro que você não usa mais com um amigo.",
-    "xp": 50,
+    "titulo": "Coração Solidário (Doação)",
+    "descricao": "Separe 3 brinquedos ou peças de roupa que você não usa mais para doar. Lembre-se: Doar faz bem!",
+    "xp": 150,
     "status": "pendente"
   },
   {
     "id": 2,
-    "titulo": "Cofre Cheio",
-    "descricao": "Guarde 10% da sua mesada ou semanada no cofrinho.",
-    "xp": 100,
-    "status": "concluido"
+    "titulo": "Pequeno Empreendedor",
+    "descricao": "Crie algo com suas mãos (desenho, pulseira, história) e 'venda' para um familiar em troca de uma moeda simbólica ou um favor.",
+    "xp": 200,
+    "status": "pendente"
   },
   {
     "id": 3,
     "titulo": "Caçador de Desperdício",
-    "descricao": "Identifique uma luz acesa sem necessidade em casa e apague.",
-    "xp": 30,
+    "descricao": "Encontre uma luz acesa em um cômodo vazio e apague para ajudar no Orçamento da casa.",
+    "xp": 50,
+    "status": "pendente"
+  },
+  {
+    "id": 4,
+    "titulo": "Mestre do Cofrinho",
+    "descricao": "Guarde 10% de qualquer dinheiro que você ganhar esta semana. Isso é pagar a si mesmo primeiro!",
+    "xp": 100,
     "status": "pendente"
   }
 ]

@@ -1,22 +1,37 @@
 [
   {
-    "conceito": "Escambo",
-    "explicacao": "É a troca de coisas sem usar dinheiro! Antigamente, as pessoas trocavam sal e sementes por outras coisas que precisavam.",
-    "exemplo": "Trocar uma figurinha repetida por uma que você não tem."
+    "conceito": "Os 4 Pilares da Riqueza",
+    "explicacao": "São as 4 ações mágicas: 1. GANHAR (Trabalho/Empreender), 2. GASTAR (Com sabedoria), 3. POUPAR (Guardar para sonhos) e 4. DOAR (Ajudar o mundo).",
+    "exemplo": "Recebi 10 moedas: gasto 5, guardo 3 e doo 2."
+  },
+  {
+    "conceito": "Orçamento",
+    "explicacao": "É o Mapa do Tesouro! Um plano onde você anota tudo o que ganha e tudo o que gasta para não ficar sem moedas no final do mês.",
+    "exemplo": "Anotar no caderno que a mesada é 20 reais e o lanche custa 5."
+  },
+  {
+    "conceito": "Inflação (O Dragão)",
+    "explicacao": "É quando os preços das coisas aumentam com o tempo e seu dinheiro vale menos. É como um dragão que come pedacinhos da sua moeda.",
+    "exemplo": "Ano passado o picolé custava 1 real, hoje custa 2 reais."
+  },
+  {
+    "conceito": "Juros (Aluguel do Dinheiro)",
+    "explicacao": "Se você empresta dinheiro ao banco (poupança), ele te paga juros (Juros Amigos). Se você pega emprestado (cartão), você paga juros ao banco (Juros Vilões).",
+    "exemplo": "A dívida do cartão cresce rápido por causa dos juros vilões."
   },
   {
     "conceito": "Desejo vs Necessidade",
-    "explicacao": "Necessidade é o que a gente precisa pra viver (comida, casa). Desejo é o que a gente quer ter (brinquedo, viagem).",
-    "exemplo": "Comer é necessidade. Comer pizza todo dia é desejo!"
+    "explicacao": "Necessidade é o que você precisa para viver (água, comida, casa). Desejo é o que você quer para se divertir (brinquedo, sorvete).",
+    "exemplo": "Tênis para ir à escola é necessidade. Tênis de luzinha é desejo."
+  },
+  {
+    "conceito": "Empreendedorismo Mirim",
+    "explicacao": "É usar a criatividade para resolver problemas e ganhar moedas extras. Criança não trabalha, mas pode criar projetos!",
+    "exemplo": "Vender pulseiras, fazer bazar de brinquedos antigos ou levar o cachorro do vizinho para passear."
   },
   {
     "conceito": "Os 5 Rs",
-    "explicacao": "São 5 poderes para salvar o planeta e o bolso: Repensar, Recusar, Reduzir, Reutilizar e Reciclar.",
-    "exemplo": "Reutilizar uma garrafa de água em vez de comprar uma nova."
-  },
-  {
-    "conceito": "Juros",
-    "explicacao": "É o 'preço' do dinheiro no tempo. Se você empresta, recebe juros. Se pega emprestado, paga juros.",
-    "exemplo": "Como se fosse um aluguel que o banco paga pra usar seu dinheiro."
+    "explicacao": "Poderes da sustentabilidade: Repensar, Recusar, Reduzir, Reutilizar e Reciclar.",
+    "exemplo": "Recusar uma sacola plástica e levar a sua mochila."
   }
 ]

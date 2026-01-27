@@ -1,126 +1,115 @@
 import streamlit as st
 import requests
 import pandas as pd
-import json
 from conteudo import carregar_dados, gerar_contexto_llm
 from gamificacao import calcular_progresso_nivel, calcular_progresso_meta
 
 # ============ CONFIGURAÇÃO ============
-# URL padrão do Ollama (como no projeto do falvojr)
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODELO = "llama3.2:1b" 
-#alguns modelos caso for testar outros:
-# MODELO = "qwen3:1.7b"
-# MODELO = "gpt-oss"
-# MODELO = "deepseek-r1:1.5b"
-# MODELO = "llama3.2:1b"
-# MODELO = "llama3.2:latest"
-#============================================================================================================================
+MODELO = "qwen3:1.7b"
+
+#*Alternativas de modelos*
+#### Modelo = "qwen3:1.7b"
+#### Modelo = "qwen3:0.6b"
+#### Modelo = "deepseek-r1:1.5b"
+#### Modelo = "llama3.2:latest"
+#### Modelo = "llama3.2:1b"
+#### Modelo = "gpt-oss"
+
+
 # ============ CARREGAR DADOS ============
-perfil, enciclopedia, missoes, cofrinho = carregar_dados()
+perfil, enciclopedia, missoes, cofrinho, flashcards = carregar_dados()
 
 if perfil is None:
-    st.error("🚨 Erro Crítico: Base de dados não encontrada na pasta 'data/'!")
+    st.error("🚨 Erro: Verifique se os arquivos JSON e CSV estão na pasta data!")
     st.stop()
 
-# ============ SYSTEM PROMPT (PERSONA) ============
-# Definido com base no arquivo docs/03-prompts.md
+# ============ SYSTEM PROMPT (BLINDAGEM) ============
 SYSTEM_PROMPT = """
-EU SOU O AXÉZINHO 🎒, um guia de aventuras econômicas para crianças.
-Sua missão é ensinar educação financeira de forma lúdica e gamificada.
+Você é o Axézinho 🎒, mentor financeiro para crianças.
+Sua regra número 1 é: NÃO INVENTE. Use apenas os dados fornecidos abaixo.
 
-REGRAS DE COMPORTAMENTO:
-1. Use a 'ENCICLOPÉDIA' fornecida no contexto para explicar conceitos. Se não souber, diga que é "magia de adulto".
-2. Se a criança falar em GASTAR ou COMPRAR, pergunte sempre: "Isso é um DESEJO ou uma NECESSIDADE?".
-3. Incentive a completar as MISSÕES para ganhar XP.
-4. Use os dados do PERFIL para personalizar (fale o nome, quanto falta pro skate, etc).
-5. NUNCA recomende investimentos reais (Bolsa, Cripto). Redirecione para o "Cofrinho".
-6. Seja curto, use emojis e fale como um amigo aventureiro.
+DIRETRIZES:
+1. Se a pergunta estiver nos [FLASHCARDS], responda exatamente como está lá.
+2. Se for sobre um conceito (ex: Inflação, Juros, Doação), use o [DICIONÁRIO ECONÔMICO].
+3. Se a criança pedir dinheiro, sugira as [MISSÕES] ou o 'Empreendedorismo Mirim'.
+4. Sempre verifique 'Desejo vs Necessidade' antes de apoiar uma compra.
+5. Fale de forma simples e use emojis.
 """
 
 # ============ FUNÇÃO DE COMUNICAÇÃO COM OLLAMA ============
 def perguntar_axezinho(msg_usuario):
-    # 1. Gera o contexto atualizado com os dados mais recentes
-    contexto_dados = gerar_contexto_llm(perfil, enciclopedia, missoes, cofrinho)
+    contexto = gerar_contexto_llm(perfil, enciclopedia, missoes, cofrinho, flashcards)
     
-    # 2. Monta o prompt final
-    prompt_completo = f"""
+    prompt = f"""
     {SYSTEM_PROMPT}
-
-    DADOS ATUAIS DO JOGO (Contexto):
-    {contexto_dados}
-
-    PERGUNTA DO EXPLORADOR: {msg_usuario}
+    
+    === SEU CONHECIMENTO (DADOS) ===
+    {contexto}
+    
+    === PERGUNTA DA CRIANÇA ===
+    "{msg_usuario}"
+    
+    === SUA RESPOSTA ===
     """
 
     try:
-        # Chamada à API do Ollama (igual ao exemplo do falvojr)
-        payload = {
+        # Temperatura 0.2 para evitar 'criatividade' excessiva (fuga do tema)
+        r = requests.post(OLLAMA_URL, json={
             "model": MODELO,
-            "prompt": prompt_completo,
-            "stream": False
-        }
-        r = requests.post(OLLAMA_URL, json=payload)
+            "prompt": prompt,
+            "stream": False,
+            "options": {"temperature": 0.2, "num_ctx": 4096}
+        })
         
         if r.status_code == 200:
             return r.json()['response']
         else:
-            return f"Ocorreu um erro no meu cérebro digital... (Erro {r.status_code})"
-            
-    except requests.exceptions.ConnectionError:
-        return "🔌 Não consegui conectar ao Ollama! Verifique se ele está rodando com 'ollama serve'."
+            return f"Erro técnico no Ollama: {r.status_code}"
+    except:
+        return "O Axézinho está tirando um cochilo... (Ollama desconectado 🔌)"
 
 # ============ INTERFACE (STREAMLIT) ============
-st.set_page_config(page_title="Axézinho - Aventura", page_icon="🎒", layout="wide")
+st.set_page_config(page_title="Axézinho - Mestre das Moedas", page_icon="🎒", layout="wide")
 
 # --- SIDEBAR (GAMIFICAÇÃO) ---
 with st.sidebar:
-    st.image("https://img.freepik.com/vetores-gratis/cofrinho-fofo-com-moeda_1308-133566.jpg?w=200", width=150) # Placeholder
+    st.image("https://cdn-icons-png.flaticon.com/512/2953/2953363.png", width=100)
     st.title(f"Explorador {perfil['nome']}")
-    st.caption(f"Nível: {perfil['titulo']}")
+    st.write(f"**Nível:** {perfil['titulo']}")
+    st.progress(calcular_progresso_nivel(perfil))
     
-    # Barra de XP
-    xp_pct = calcular_progresso_nivel(perfil)
-    st.progress(xp_pct)
-    st.write(f"XP: {perfil['xp_atual']} / {perfil['xp_proximo_nivel']}")
-    
-    st.markdown("---")
-    st.subheader("🎯 Meta: " + perfil['meta_atual']['nome'])
-    
-    # Barra da Meta
-    meta_pct = calcular_progresso_meta(perfil)
-    st.progress(meta_pct)
-    
-    c1, c2 = st.columns(2)
-    c1.metric("Guardado", f"R$ {perfil['meta_atual']['guardado']}")
-    c2.metric("Falta", f"R$ {perfil['meta_atual']['custo'] - perfil['meta_atual']['guardado']:.2f}")
+    st.divider()
+    st.subheader(f"🎯 Meta: {perfil['meta_atual']['nome']}")
+    st.progress(calcular_progresso_meta(perfil))
+    falta = perfil['meta_atual']['custo'] - perfil['meta_atual']['guardado']
+    st.caption(f"Faltam apenas R$ {falta:.2f}!")
 
 # --- ÁREA PRINCIPAL ---
 st.title("🎒 Chat com Axézinho")
-st.markdown("Converse sobre **missões**, **economia** ou peça ajuda para **juntar moedas**!")
+st.markdown("Pergunte sobre **dinheiro**, **missões** ou **como realizar sonhos**!")
 
 # Histórico de Chat
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+for msg in st.session_state.messages:
+    st.chat_message(msg["role"]).write(msg["content"])
 
 # Input do Usuário
-if prompt := st.chat_input("Digite aqui, pequeno gafanhoto..."):
+if prompt := st.chat_input("Diga: Quero comprar um doce..."):
     # Exibe msg usuário
-    st.chat_message("user").markdown(prompt)
+    st.chat_message("user").write(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     # Chama o Ollama
     with st.chat_message("assistant"):
-        with st.spinner("Consultando o mapa do tesouro... 🗺️"):
-            resposta = perguntar_axezinho(prompt)
-            st.markdown(resposta)
+        with st.spinner("Consultando os Flashcards..."):
+            resp = perguntar_axezinho(prompt)
+            st.write(resp)
     
     # Salva resposta
-    st.session_state.messages.append({"role": "assistant", "content": resposta})
+    st.session_state.messages.append({"role": "assistant", "content": resp})
 
 # --- ABAS DE DADOS (VISUALIZAÇÃO) ---
 # Adicionamos isso para o usuário ver os dados que o LLM está lendo
