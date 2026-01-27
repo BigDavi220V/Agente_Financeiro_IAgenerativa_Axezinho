@@ -86,6 +86,8 @@ ollama serve
 #### Modelo = "gpt-oss"
 
 OBS: Nesse projeto é utilizado o modelo qwen3:1.7b de inteligência artificial. É pequeno, porém preciso nas respostas desde que tenha uma base de dados sólida.
+
+
 Certifique-se de ter o **Python** instalado.
 
 ```bash
