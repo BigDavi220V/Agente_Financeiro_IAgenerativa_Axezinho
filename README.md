@@ -2,7 +2,7 @@
 
 O **Axézinho** é um agente inteligente e gamificado de educação financeira focado em crianças e adolescentes (8 a 12 anos).
 
-Desenvolvido com **Python**, **Streamlit** e **IA Generativa Local (Ollama)**, o projeto ensina conceitos econômicos fundamentais — como os **4 Pilares** (Ganhar, Gastar, Poupar e Doar) — de forma lúdica e segura.
+Desenvolvido com **Python**, **Streamlit** e **IA Generativa Local (Ollama)**, o projeto ensina conceitos econômicos fundamentais como os **4 Pilares** (Ganhar, Gastar, Poupar e Doar) de forma lúdica e segura.
 
 ### 🛡️ Diferenciais e Segurança
 Diferente de IAs genéricas, o Axézinho possui **Guardrails (travas de segurança)** rigorosos que impedem recomendações de investimentos reais, focando exclusivamente na:
